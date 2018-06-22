@@ -1,0 +1,23 @@
+<HTML>
+<HEAD><TITLE>Exercice avec Python</TITLE></HEAD>
+<BODY>
+<DIV ALIGN="center">
+<IMG SRC="penguin.gif">
+<H2>Page Web interactive</H2>
+<P>Cette page est associée à un script Python</P>
+
+<FORM ACTION="http://localhost/cgi-bin/hello.py" METHOD="post">
+    <INPUT TYPE="submit" NAME="send" VALUE="Exécuter le script"></INPUT>
+    </FORM>
+
+    {% if ecriture %}Le fichier a bien été mis à jour !{% endif %}
+
+<FORM ACTION="{% url "script" %}" METHOD="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <INPUT TYPE="submit" NAME="send" VALUE="Envoyer la hauteur"></INPUT>
+    </FORM>
+
+</DIV>
+    </BODY>
+    </HTML>
