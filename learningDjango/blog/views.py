@@ -35,7 +35,6 @@ def bitcointransaction(request):
         file = open("testfile.txt","w+")
         file.write("blockheight " + str(hauteur) + "\n transaction")
         file.close()
-
         ecriture = True
         blockhash=getblockhashfromheight(hauteur)
         block=getblockfromblockhash(blockhash)

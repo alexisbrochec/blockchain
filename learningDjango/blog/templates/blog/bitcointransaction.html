@@ -1,31 +1,24 @@
+<center>
+       
 <form action="{% url "bitcointransaction" %}" method="post">
-    {% csrf_token %}
-    {{ form.hauteur.visible_field}}
+    <div class="container">
+        Hauteur: <input type="number" name="hauteru" maxlength="7"><br>          
+    </div>
+<br>
+            
     <input type="submit" value="Submit" />
-
-    <div>
-    {% csrf_token %}
-    {{ form.as_p }}
-    </div>
-    <center>
-    <div class="tableau",display: none> 
-         
-             
-<div class="container">
-  <div class="row justify-content-md-center">
-    <div class="col col-lg-2">
-      1 of 3
-    </div>
-    <div class="col-md-auto">
-      Variable width content
-    </div>
-  </div>
-            
-            
-    <br />
+    
+    
+    <br>
+    <br>
+    
+    <br>
+    <br>
+    
          
 <table>
     <caption>Transactions List</caption>
+    <br>
     
    <tr>
        <th>Transaction's ID</th>
@@ -33,38 +26,18 @@
    </tr>
 
     
-<?php for (i=0;i++;i<len(listoftransactionid))?>
-    <tr>
-        <td><?php echo $i; ?></td>
-        <td><?php echo $listoftransactionis[i]; ?></td>
-    </tr>
+    {? for (i=0;i++;i<len(listoftransactionid)) ?}{                                
+            <tr>
+                <td> {? echo $i; ?} </td>
+                <td> <a href="{% url 'listoftransactionis[i]' %}"> {? echo $listoftransactionis[i]; ?}</a> </td>
+            </tr>
+        }
     
-    
-   <tr>
-       <td>Carmen</td>
-       <td>33 ans</td>
-   </tr>
-   <tr>
-       <td>Michelle</td>
-       <td>26 ans</td>
-   </tr>
 </table>
     
 </div>
-    </center>
-
-
-
-<div class="Wallets">
-
-<p>The input Wallets are </p>
-
-<p>The output Wallets are </p>
     
-</div>
-    
-<div >
-    <p>c'est la merde</p>
-</div>
+</center>
+
     
 </form>

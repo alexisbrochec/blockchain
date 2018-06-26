@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='accueil'),
+    path('', views.home, name='accueil'),  # achanger pour rediriger vers la page html de l'affichage des Input/Output
     path('article/<int:id>-<slug:slug>$', views.lire, name='lire'),
     path('accueil', views.home),
     path('articles/<int:year>/<int:month>', views.list_articles),
