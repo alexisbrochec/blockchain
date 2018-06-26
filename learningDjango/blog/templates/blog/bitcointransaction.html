@@ -26,10 +26,10 @@
    </tr>
 
     
-    {? for (i=0;i++;i<len(listoftransactionid)) ?}{                                
+    {? for (i=0;i++;i<len(listoftransaction)) ?}{                                
             <tr>
                 <td> {? echo $i; ?} </td>
-                <td> <a href="{% url 'listoftransactionis[i]' %}"> {? echo $listoftransactionis[i]; ?}</a> </td>
+                <td> <a href="{% url 'listoftransaction[i]' %}"> {? echo $listoftransaction[i]; ?}</a> </td>
             </tr>
         }
     
