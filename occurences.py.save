@@ -1,0 +1,54 @@
+# -*- coding: utf8 -*- 
+import os 
+from time import *
+import subprocess 
+import re 
+import json 
+from collections import Counter 
+import mysql.connector 
+
+BITCOIND_PATH = '/home/abrochec/blockchain/bitcoin-0.16.1' 
+
+cnx = mysql.connector.connect(user='root', password='Alexis2018!',host='localhost',database='miners') #10 
+cursor = cnx.cursor() 
+
+# this programe get the occurences of mining wallets per weeks
+
+def getoccurences(listofminers):
+
+	listofelement = []
+	test=Counter(listofminers)
+	print(test)
+	listofelements=list(test.elements()) 
+	return listofelement
+
+def secTodate(nombre):
+	listdate=[]
+	annee=divmod(nombre, (3600*24*365))
+	month=divmod(annee[1], (3600*24*31))
+	jour=divmod(month[1], (3600*24))
+	heure=divmod(jour[1], 3600)
+	minute=divmod(heure[1], 60)
+	seconde=minute[1]
+	print (nombre, "s = ", annee[0], "an(s)", month[0], "mois", jour[0], "jour(s)", heure[0], "heure(s)", minute[0], "minute(s)", seconde, "seconde(s)")
+	listdate.append(annee[0])
+	listdate.append(month[0])
+	listdate.append(jour[0])
+	listdate.append(heure[0])
+	listdate.append(minute[0])
+	listdate.append(seconde)
+	return listdate
+
+# main part:
+var=input ("enter a date in order to check the occurences of this week")
+test=int(var)
+print(secTodate(test))
+listofoccurences=[]
+listofminers=("SELECT wallet FROM  minersinfo " 
+               "WHERE date>var and date<(var+604800)")
+listofocurrences=getoccurences(listofminers)
+print(listofoccurences)
+
+cursor.close() 
+cnx.close() 
+

@@ -4,7 +4,7 @@ import subprocess
 import re
 import json
 
-BITCOIND_PATH = '/home/wtan/bitcoin-0.16.0'
+BITCOIND_PATH = '/home/abrochec/blockchain/bitcoin-0.16.1'
 
 #function used to ask the user for the block height///////////////
 def askheight():
@@ -85,3 +85,15 @@ def getVinaddresses(decodedtransaction):
     print("list of Input wallets :")
     print(listofvinaddresses)
     return listofvinaddresses
+
+def getValuesOut(decodedtransaction):
+    listofvaluesout = [] #list of values of bitcoin transfert out
+    
+    jsontransaction = json.loads(decodedtransaction)
+
+    #Getting the values output from vout
+    for i in range(0, len(jsontransaction["vout"])):
+        listofvaluesout.append(jsontransaction["vout"][i]["value"])
+    print("list of values per wallets :")
+    print(listofvaluesout)
+    return listofvaluesout

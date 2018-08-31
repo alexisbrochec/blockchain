@@ -1,40 +1,45 @@
 <center>
        
 <form action="{% url "bitcointransaction" %}" method="post">
-    <div class="container">
-        Hauteur: <input type="number" name="hauteru" maxlength="7"><br>          
-    </div>
-<br>
-            
-    <input type="submit" value="Submit" />
-    
-    
-    <br>
-    <br>
-    
-    <br>
-    <br>
-    
-         
+
 <table>
-    <caption>Transactions List</caption>
+    <br>
+    <br>
+
+   <tr>
+       <th>Transaction's Hash</th>
+   </tr>
+    
+    {% for i in listoftransaction %}                                
+        <tr>
+            <td> <a href="http://193.2.76.40:8001/blog/accueil">{{i}} </a></td>
+        </tr>
+       {% endfor %}
+    
+</table>
+
+<table>
+    <caption>Values List</caption>
     <br>
     
    <tr>
-       <th>Transaction's ID</th>
-       <th>Transaction's Hash</th>
+       <th>Values output</th>
    </tr>
-
     
-    {? for (i=0;i++;i<len(listoftransaction)) ?}{                                
-            <tr>
-                <td> {? echo $i; ?} </td>
-                <td> <a href="{% url 'listoftransaction[i]' %}"> {? echo $listoftransaction[i]; ?}</a> </td>
-            </tr>
-        }
+    <tr>
+        <th>{? echo $block; ?}</th>
+    </tr>
+    
+    {% for i in listofvalueout %}                                
+        <tr>
+            <td> <a href="{% url 'InputOutput' listoftransaction[i] %}" > {{i}</a></td>
+        </tr>
+       {% endfor %}
     
 </table>
-    
+
+
+         
 </div>
     
 </center>

@@ -1,0 +1,46 @@
+<form action="{% url "bitcointransaction" %}" method="post">
+
+    <div class="Wallets">
+
+    <p>The input Wallets are </p>
+    <br>
+    <table>
+    
+    {% for i in listofvinadresses %}                                
+        <tr>
+            <td>  {{i}}</td>
+        </tr>
+       {% endfor %}
+    </table>
+    <br>
+    <br>
+    <p>The output Wallets are </p>
+    <br>
+     <table>
+    
+    {% for j in listofvoutaddresses %}                                
+        <tr>
+            <td>  {{j}}</td>
+        </tr>
+       {% endfor %}
+    </table>
+        
+<table>
+    <caption>Values List</caption>
+    <br>
+    
+   <tr>
+       <th>Values output</th>
+   </tr>
+    
+    {% for k in listofvaluesout %}                                
+        <tr>
+            <td> <a> {{k}}</a></td>
+        </tr>
+       {% endfor %}
+    
+</table>          
+        
+    </div>
+    
+</form>

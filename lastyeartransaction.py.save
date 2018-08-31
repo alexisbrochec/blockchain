@@ -1,0 +1,124 @@
+# -*- coding: utf8 -*-
+import os
+from time import *
+import subprocess
+import re
+import json
+from collections import Counter
+import mysql.connector
+
+BITCOIND_PATH = '/home/abrochec/blockchain/bitcoin-0.16.1'
+
+cnx = mysql.connector.connect(user='root', password='Alexis2018!',host='localhost',database='miners') #10
+cursor = cnx.cursor(buffered=True)
+
+
+#part of the code that take last block timestamp
+def get_lastblocktimestamp():
+	lenght = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getblockcount'], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	blockhash = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getblockhash', lenght], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	block = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getblock', blockhash], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	listoftime = [] #30
+	jsonblock = json.loads(block)
+	listoftime=jsonblock["time"]
+	return listoftime
+
+def getlistoftransactionidfromblock(block):
+	listoftransactionid = [] #list storing the transaction ids 
+	jsonblock = json.loads(block) #20
+	#Converting to json and getting the list of transaction 
+	listoftransactionid.append(jsonblock["tx"][0]) 
+	return listoftransactionid
+
+
+def get_yearpriorblocktimestamp(time):
+	yearprior=time-2536800
+	str_yearprior=str(yearprior)
+	query=("SELECT blockid FROM  minersinfo WHERE date>"+str_yearprior+" ORDER BY blockid ASC LIMIT 1")
+	cursor.execute(query)
+	yearpriorblockid=cursor.fetchall()
+	return yearpriorblockid
+
+def get_transaction(height):
+	blockhash = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getblockhash', lenght], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	block = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getblock', blockhash], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	transactionids = getlistoftransactionidfromblock(block) 
+	return transactionids
+
+def get_decodedtransaction(transactionid):
+	rawtransaction= subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getrawtransaction', transactionid], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	decodedtransaction= subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'decoderawtransaction', rawtransaction.strip()], stdout=subprocess.PIPE).stdout.decode('utf-8') 
+	return decodedtransaction 
+
+def get_Vinaddresses(decodedtransaction):
+	listofvinaddresses = [] #list of addresses of the input of the current transaction
+	listofvinposition = [] #list of the position of the vin in  the previous transaction
+	listofvintransaction =[] #list of the previous transaction
+	#Converting the decoding transaction to json
+	jsontransaction = json.loads(decodedtransaction)
+	#appel de getVin
+	if 'txid' in jsontransaction['vin'][0]:
+		for j in range(0, len(jsontransaction["vin"])):
+			listofvintransaction.append(jsontransaction["vin"][j]["txid"])
+	if 'vout' in jsontransaction['vin'][0]:
+		for j in range(0, len(jsontransaction["vin"])):
+			listofvinposition.append(jsontransaction["vin"][j]["vout"])
+			listofvinaddresses.append(getVinaddress(listofvintransaction[j],listofvinposition[j]))
+	return listofvinaddresses
+
+
+#Recovery of the financial input (with the previous transaction and it's position in that transaction)
+
+def get_Vinaddress(transactionid, voutindex):
+	vinrawtransaction= subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getrawtransaction', transactionid], stdout=subprocess.PIPE).stdout.decode('utf-8')
+	vindecodedrawtransaction = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'decoderawtransaction', vinrawtransaction.strip()], stdout=subprocess.PIPE).stdout.decode('utf-8')
+	jsonvin = json.loads(vindecodedrawtransaction)
+	#Recovery of every addresses of output of this "old" transaction
+	vinaddress = jsonvin['vout'][voutindex]['scriptPubKey']['addresses']
+	return vinaddress
+
+
+def get_Voutaddresses(decodedtransaction): 
+	listofvoutaddresses=[]
+	#Converting the decoding transaction to json 
+	jsontransaction = json.loads(decodedtransaction) 
+	#Getting the correct addresses output from vout 50 
+	if ("nulldata" in jsontransaction["vout"][0]["scriptPubKey"]["type"]): 
+		listofvoutaddresses.append(*jsontransaction["vout"][1]["scriptPubKey"]["addresses"]) 
+	elif ("nulldata" in jsontransaction["vout"][0]["scriptPubKey"]["type"] and "nulldata" in jsontransaction["vout"][1]["scriptPubKey"]["type"]): #some block have no reward (like block 501726) 
+        	listofvoutaddresses.append(*jsontransaction["vout"][2]["scriptPubKey"]["addresses"]) 
+	elif ("pubkey" in jsontransaction["vout"][0]["scriptPubKey"]["type"]): 
+        	listofvoutaddresses.append(*jsontransaction["vout"][0]["scriptPubKey"]["addresses"]) 
+	else :
+		listofvoutaddresses.append("0") 
+	return listofvoutaddresses 
+
+# main part:
+lenght = subprocess.run([BITCOIND_PATH + '/bin/bitcoin-cli', 'getblockcount'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+lastblocktimestamp=get_lastblocktimestamp()
+print(lastblocktimestamp)
+lastyearblock=get_yearpriorblocktimestamp(lastblocktimestamp)
+
+query=("INSERT INTO transactions (Vin, transaction, Vout) VALUES (%s ,%s ,%s)")
+
+blockheight=lastyearblock
+while blockheight!=lenght:
+	listoftransaction=get_transaction(blockheight)
+	for i in listoftransaction:
+		decodedtransaction=get_decodedtransaction(i)
+		Vout=get_Voutaddresses(decodedtransaction)
+		Vin=get_Vinaddresses(decodedtransaction)
+		listofVout=[','.join(Vout)]
+		if not Vin:
+			listofVin="0"
+		else:
+			listofVin=[','.join(Vin)]
+		vin
+
+		print(listofVout[0],listofVin[0], i)
+		data_transaction=(listofVin ,i ,listofVout)
+		cursor.execute(query, data_transaction)
+cursor.close()
+
+cnx.close()
+

@@ -20,28 +20,32 @@ def script(request):
         ecriture = True
     return render(request, 'blog/script.html', locals())
 
+def InputOutput(request):
+
+    transactionid="0b05c03271f2170aa92870a598768414a92d131b06f80c4d0ccb8e711e689b11"
+    rawtransaction=getrawtransactionfromtransactionid(transactionid)
+    decodedtransaction=decoderawtransactionfromrawtransaction(rawtransaction)
+    listofvoutaddresses=getVoutaddresses(decodedtransaction)
+    listofvaluesout =getValuesOut(decodedtransaction)
+    listofvinadresses=getVinaddresses(decodedtransaction)
+    
+    return render(request, 'blog/InputOutput.html', locals())
+
+
 def testpython(request):
     
     hauteur = askheight()
     return render(request, 'blog/testpython.html', locals())
 
 def bitcointransaction(request):
-    
-    form = PythonForm(request.POST or None)
-    
-    if form.is_valid():
-        hauteur = form.cleaned_data['hauteur']
-        #transaction =form.cleaned_data['transaction']
-        file = open("testfile.txt","w+")
-        file.write("blockheight " + str(hauteur) + "\n transaction")
-        file.close()
-        ecriture = True
-        blockhash=getblockhashfromheight(hauteur)
-        block=getblockfromblockhash(blockhash)
-        listoftransaction=getlistoftransactionidfromblock(block)
+    hauteur = "125000"
+    ecriture = True
+    blockhash=getblockhashfromheight(hauteur)
+    block=getblockfromblockhash(blockhash)
+    listoftransaction=getlistoftransactionidfromblock(block)
+    end=len(listoftransaction)    
         
     return render(request, 'blog/bitcointransaction.html', locals())
-
 
 
 def creerarticle(request):

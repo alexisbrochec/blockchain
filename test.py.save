@@ -1,0 +1,52 @@
+# -*- coding: utf8 -*-
+import os
+import subprocess
+import re
+import json
+
+entre =input("continuer: autre que b")
+listoftransactionid = []
+listofvout = []
+
+def demandernombre():
+    hauteur = input ("entrer la hauteur du block voulus, ou b pour quitter")
+    return hauteur
+
+def affichage():
+    global nombre
+    nombre = inpu
+    print(nombre)
+    return nombre
+
+# def  recupVin(idtransaction, idvout):
+    # transaction= subprocess.run(['./bitcoin-0.16.1/bin/bitcoin-cli', 'getrawtransaction', idtransaction], stdout=subpro$
+    
+
+while entre!='b':
+    affichage()
+    blockhash = subprocess.run(['./bitcoin-0.16.1/bin/bitcoin-cli', 'getblockhash', nombre], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    block = subprocess.run(['./bitcoin-0.16.1/bin/bitcoin-cli', 'getblock', blockhash], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    jsonblock = json.loads(block)
+
+   #Converting to json and getting the list of transaction
+    for transactionids in jsonblock['tx']:
+    	listoftransactionid.append(transactionids)
+
+    #For test only
+    for transaction in enumerate(listoftransactionid):
+    	print(transaction)
+
+    indicateur = input("quelle transaction voulez vous étudier ?")
+    idtransaction = listoftransactionid[int(indicateur)] 
+    transaction= subprocess.run(['./bitcoin-0.16.1/bin/bitcoin-cli', 'getrawtransaction', idtransaction], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    identifiant= subprocess.run(['./bitcoin-0.16.1/bin/bitcoin-cli', 'decoderawtransaction', transaction.strip()], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    print (identifiant)
+    jsonidentifiant = json.loads(identifiant)
+    
+    for vout in jsonidentifiant['address']
+	#use the Json file in order to extract the Vout and also do the same process to get the Vin
+
+    entre = input ("continuer ? (si non input b)")
+
+pass
+
